@@ -1,12 +1,12 @@
-import Hero from "./components/pages/Home/Hero";
-import ProjectDetail from "./components/pages/Home/ProjectDetail";
+import Hero from "./components/pagecomponents/Home/Hero";
+import ProjectDetail from "./components/pagecomponents/Home/ProjectDetail";
 
 export default function Home() {
   return (
     <div>
       <main>
-      <Hero />
-      <ProjectDetail />
+        <Hero />
+        <ProjectDetail />
       </main>
     </div>
   );

@@ -1,3 +1,5 @@
+'use client'
+
 import { Container, Grid2, Typography } from "@mui/material";
 import Image from "next/image";
 import ods3 from "../../../../../public/ODS3.png";

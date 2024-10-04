@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import { Box} from "@mui/material";
 import Image from "next/image";
