@@ -1,27 +1,24 @@
 "use client";
 
-import { Box, Container, Typography } from "@mui/material";
+import { Box} from "@mui/material";
+import Image from "next/image";
 
 export default function Hero() {
   return (
     <Box
       sx={{
         width: "100%",
-        paddingTop: 10,
+        paddingTop: 2,
         display: "flex",
       }}
     >
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-        }}
-         maxWidth="xl"
-      >
-        <Typography variant="h1" gutterBottom>
-          Proyecto - Etapa 1
-        </Typography>
-      </Container>
+      <Image
+        src="/banner.png"
+        alt="Logo"
+        height={620}
+        width={1920}
+        style={{ marginBottom: "3rem" }}
+      />
     </Box>
   );
 }
