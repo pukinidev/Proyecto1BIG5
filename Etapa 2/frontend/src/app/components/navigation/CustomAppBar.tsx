@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 
+
 const pages = ['Predecir el conjunto de datos', "Predecir una muestra de los datos"];
 
 function ResponsiveAppBar() {
@@ -26,35 +27,33 @@ function ResponsiveAppBar() {
   };
 
   return (
-    <header>
-    <AppBar color='inherit'>
+    <AppBar color='transparent'>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
             variant="h6"
-            noWrap
             component="a"
             href="#app-bar-with-responsive-menu"
+            color='header.main'
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
               fontWeight: 700,
-              color: 'inherit',
               textDecoration: 'none',
+              
             }}
           >
             Proyecto 1 BI - Etapa 2
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' }}}>
             <IconButton
               size="large"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleOpenNavMenu}
-              color="inherit"
+              
             >
               <MenuIcon />
             </IconButton>
@@ -76,7 +75,7 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{page}</Typography>
+                  <Typography sx={{ textAlign: 'center'}}>{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -91,18 +90,18 @@ function ResponsiveAppBar() {
               flexGrow: 1,
               fontFamily: 'monospace',
               fontWeight: 700,
-              color: 'inherit',
               textDecoration: 'none',
+              color:'header.main'
             }}
           >
             Proyecto 1 BI - Etapa 2
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }}}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'inherit', display: 'block' }}
+                sx={{ my: 2, display: 'block', color:'header.main' }}
               >
                 {page}
               </Button>
@@ -111,7 +110,6 @@ function ResponsiveAppBar() {
         </Toolbar>
       </Container>
     </AppBar>
-    </header>
   );
 }
 export default ResponsiveAppBar;

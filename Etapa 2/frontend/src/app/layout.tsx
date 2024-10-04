@@ -3,7 +3,7 @@ import { Roboto } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import ResponsiveAppBar from "./components/navigation/CustomAppBar";
 import theme from "./theme";
-
+import CssBaseline from '@mui/material/CssBaseline';
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -21,11 +21,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={roboto.variable} style={{ margin: 0 }}>
         <AppRouterCacheProvider>
-          <ResponsiveAppBar />
           <ThemeProvider theme={theme}>
-            
+          <CssBaseline />
+          <ResponsiveAppBar />
+           
               {children}
-            
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
