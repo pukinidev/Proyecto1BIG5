@@ -1,5 +1,8 @@
 import { Container, Grid2, Typography } from "@mui/material";
 import Image from "next/image";
+import ods3 from "../../../../../public/ODS3.png";
+import ods4 from "../../../../../public/ODS4.png";
+import ods5 from "../../../../../public/ODS5.png";
 
 export default function ProjectDetail() {
   return (
@@ -42,9 +45,9 @@ export default function ProjectDetail() {
         justifyContent: "center",
         marginBottom: "1rem",
       }}>
-        <Image src="/ODS3.png" alt="ODS 3" height={300} width={300} />
-        <Image src="/ODS4.png" alt="ODS 4" height={300} width={300} />
-        <Image src="/ODS5.png" alt="ODS 5" height={300} width={300} />
+        <Image src={ods3} alt="ODS 3" height={300} width={300} />
+        <Image src={ods4} alt="ODS 4" height={300} width={300} />
+        <Image src={ods5} alt="ODS 5" height={300} width={300} />
       </Grid2>
     </Container>
   );
