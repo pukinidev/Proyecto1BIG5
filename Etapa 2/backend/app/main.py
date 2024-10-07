@@ -22,9 +22,9 @@ def docs():
 
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
-    data = await file.read() 
     if file.filename.split(".")[-1] not in ["csv", "xlsx"]:
         raise HTTPException(status_code=400, detail="Archivo no permitido")
+    data = await file.read() 
     df = pd.read_excel(BytesIO(data))
     print(df.sample(5))
     return {"filename": file.filename}
