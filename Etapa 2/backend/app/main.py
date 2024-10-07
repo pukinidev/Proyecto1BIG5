@@ -20,6 +20,13 @@ app.add_middleware(
 def docs():
     return RedirectResponse(url="/docs")
 
+"""
+
+ENDPOINT 1
+
+
+"""
+
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
     if file.filename.split(".")[-1] not in ["csv", "xlsx"]:
@@ -28,3 +35,19 @@ async def create_upload_file(file: UploadFile = File(...)):
     df = pd.read_excel(BytesIO(data))
     print(df.sample(5))
     return {"filename": file.filename}
+
+@app.get("/downloadfile")
+async def download_data():
+    pass
+
+"""
+
+ENDPOINT 2
+
+"""
+
+@app.post("/predict")
+async def predict():
+    pass
+
+
