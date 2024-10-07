@@ -2,6 +2,7 @@ from typing import Annotated
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
 
 app = FastAPI()
 
@@ -20,6 +21,7 @@ def docs():
 @app.post("/uploadfile")
 async def create_upload_file(file: UploadFile = File(...)):
     data = await file.read()
+    
     with open(f"data/{file.filename}", "wb") as f:
         f.write(data)
     return {"filename": file.filename}
