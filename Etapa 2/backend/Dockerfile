@@ -1,11 +1,14 @@
 FROM python:3.12-slim
 
-WORKDIR /code
+WORKDIR /app
 
-COPY ./requirements.txt /code/requirements.txt
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY requirements.txt requirements.txt
 
-COPY ./app /code/app
+RUN pip3 install -r requirements.txt
 
-CMD ["fastapi", "run", "app/main.py", "--port", "8000"]
+COPY ./app /app
+
+CMD ["uvicorn", "main:app", "--host", "--port", "8080", "--reload"]
