@@ -2,7 +2,7 @@ import io
 import os
 from typing import List
 import tempfile
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Query
 from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
@@ -119,4 +119,57 @@ async def predict_from_excel(file: UploadFile = File(...)):
     except Exception as e:
         return {"error": str(e)}
     
+
+@app.post("/predict_from_excel_custom")
+async def predict_from_excel_custom(
+    file: UploadFile = File(...), 
+    format: str = Query(..., enum=["xlsx", "csv"])  # No default value
+):
+    if file.filename.split(".")[-1] not in ["csv", "xlsx"]:
+        raise HTTPException(status_code=400, detail="Archivo no permitido")
     
+    model = joblib.load("model.joblib")
+    
+    try:
+        if file.filename.endswith(".csv"):
+            df = pd.read_csv(file.file)  
+        elif file.filename.endswith(".xlsx"):
+            df = pd.read_excel(file.file, engine='openpyxl')  
+        else:
+            raise HTTPException(status_code=400, detail="Archivo no permitido")
+        
+    except Exception as e:
+        return {"error": f"Failed to read file: {str(e)}"}
+    
+    try:
+        labels = model.classes_
+        probabilities = model.predict_proba(df)
+    
+        results = []
+        for probs in probabilities:
+            result = {str(label): prob for label, prob in zip(labels, probs)}
+            results.append(result)
+        
+        results_df = pd.DataFrame(results)
+
+        if format == "csv":
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as tmp_file:
+                temp_filename = tmp_file.name
+                
+                results_df.to_csv(temp_filename, index=False)
+
+            return FileResponse(temp_filename, media_type='text/csv', filename="predictions.csv")
+
+        elif format == "xlsx":
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_file:
+                temp_filename = tmp_file.name
+
+                with pd.ExcelWriter(temp_filename, engine='xlsxwriter') as writer:
+                    results_df.to_excel(writer, index=False)
+
+            return FileResponse(temp_filename, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename="predictions.xlsx")
+
+    except Exception as e:
+        return {"error": str(e)}
+
+ 
