@@ -1,6 +1,7 @@
 import io
 import os
 from typing import List
+import tempfile
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -107,18 +108,15 @@ async def predict_from_excel(file: UploadFile = File(...)):
         
         results_df = pd.DataFrame(results)
         
-        output = io.BytesIO()
-        
-        with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-            results_df.to_excel(writer, index=False)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_file:
+            temp_filename = tmp_file.name
 
-        output.seek(0)
+            with pd.ExcelWriter(temp_filename, engine='xlsxwriter') as writer:
+                results_df.to_excel(writer, index=False)
 
-        headers = {
-            'Content-Disposition': 'attachment; filename="predictions.xlsx"'
-        }
-
-        return StreamingResponse(output, headers=headers, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        return FileResponse(temp_filename, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename="predictions.xlsx")
     
     except Exception as e:
         return {"error": str(e)}
+    
+    
