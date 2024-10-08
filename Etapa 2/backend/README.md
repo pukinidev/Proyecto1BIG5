@@ -16,7 +16,7 @@ Este comando despliega el servicio e instala las dependencias necesarias para el
 
 Para acceder al servicio desde la nube se pude realizar desde el siguiente enlace:
 
-`<ENLACE>`
+https://fastapi-967824586620.us-central1.run.app/docs
 
 ## Adicionales
 
