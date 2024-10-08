@@ -5,7 +5,9 @@ from nltk.tokenize import word_tokenize
 import unicodedata
 import re
 
-nltk.download('all')
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('punkt_tab')
 
 class Preprocesamiento(BaseEstimator, TransformerMixin):
 
