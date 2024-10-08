@@ -1,7 +1,8 @@
 import io
+import os
 from typing import List
 from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from io import BytesIO
@@ -107,13 +108,17 @@ async def predict_from_excel(file: UploadFile = File(...)):
         results_df = pd.DataFrame(results)
         
         output = io.BytesIO()
+        
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             results_df.to_excel(writer, index=False)
-        
-        output.seek(0)  # Reset pointer to start of the file
-        
-        # Return the Excel file as a response
-        return FileResponse(output, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename="predictions.xlsx")
+
+        output.seek(0)
+
+        headers = {
+            'Content-Disposition': 'attachment; filename="predictions.xlsx"'
+        }
+
+        return StreamingResponse(output, headers=headers, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
     except Exception as e:
         return {"error": str(e)}
