@@ -130,16 +130,12 @@ async def predict_from_excel_custom(
     
     model = joblib.load("model.joblib")
     
-    try:
-        if file.filename.endswith(".csv"):
-            df = pd.read_csv(file.file)  
-        elif file.filename.endswith(".xlsx"):
-            df = pd.read_excel(file.file, engine='openpyxl')  
+    if file.filename.endswith(".csv"):
+        df = pd.read_csv(file.file)  
         
+    elif file.filename.endswith(".xlsx"):
+        df = pd.read_excel(file.file, engine='openpyxl')  
         
-    except Exception as e:
-        return {"error": f"Failed to read file: {str(e)}"}
-    
     try:
         labels = model.classes_
         probabilities = model.predict_proba(df)
