@@ -135,8 +135,7 @@ async def predict_from_excel_custom(
             df = pd.read_csv(file.file)  
         elif file.filename.endswith(".xlsx"):
             df = pd.read_excel(file.file, engine='openpyxl')  
-        else:
-            raise HTTPException(status_code=400, detail="Archivo no permitido")
+        
         
     except Exception as e:
         return {"error": f"Failed to read file: {str(e)}"}
