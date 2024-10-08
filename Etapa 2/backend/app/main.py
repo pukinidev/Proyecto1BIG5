@@ -1,10 +1,12 @@
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from io import BytesIO
-
+import joblib
+from DataModel import Document, Prediction
+import logging
 
 app = FastAPI()
 
@@ -16,15 +18,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+model = joblib.load("model.joblib")
+
 @app.get("/", include_in_schema=False)
 def docs():
     return RedirectResponse(url="/docs")
 
 """
-
 ENDPOINT 1
-
-
 """
 
 @app.post("/uploadfile")
@@ -47,7 +48,12 @@ ENDPOINT 2
 """
 
 @app.post("/predict")
-async def predict():
-    pass
+async def predict(data: List[Document]):
+    data_list = [data.model_dump() for data in data]
+    df = pd.DataFrame(data_list)
+    print(df)
+    result = model.predict(df)
+    result_list = result.tolist()
+    return result_list
 
 
