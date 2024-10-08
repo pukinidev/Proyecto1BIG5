@@ -123,7 +123,7 @@ async def predict_from_excel(file: UploadFile = File(...)):
 @app.post("/predict_from_excel_custom")
 async def predict_from_excel_custom(
     file: UploadFile = File(...), 
-    format: str = Query(..., enum=["xlsx", "csv"])  # No default value
+    format: str = Query(..., enum=["xlsx", "csv"])  
 ):
     if file.filename.split(".")[-1] not in ["csv", "xlsx"]:
         raise HTTPException(status_code=400, detail="Archivo no permitido")
