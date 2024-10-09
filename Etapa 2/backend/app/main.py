@@ -166,5 +166,48 @@ async def predict_from_excel_custom(
 
     except Exception as e:
         return {"error": str(e)}
+    
+    
+@app.post("/predict_from_excel_with_multiple_responses")
+async def predict_from_excel(file: UploadFile = File(...)):
+    if file.filename.split(".")[-1] not in ["csv", "xlsx"]:
+        raise HTTPException(status_code=400, detail="Archivo no permitido")
+    
+    model = joblib.load("model.joblib")
+    
+    try:
+        df = pd.read_excel(file.file)
+    except Exception as e:
+        return {"error": f"Failed to read Excel file: {str(e)}"}
+    
+    try:
+        labels = model.classes_
+        probabilities = model.predict_proba(df)
+        
+        results = []
+        for probs in probabilities:
+            result = {str(label): prob for label, prob in zip(labels, probs)}
+            results.append(result)
+        
+        results_df = pd.DataFrame(results)
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp_file:
+            temp_filename = tmp_file.name
+
+            with pd.ExcelWriter(temp_filename, engine='xlsxwriter') as writer:
+                results_df.to_excel(writer, index=False)
+                
+                
+        return {
+            "json_results": results_df.to_dict(orient="records"),
+            "file_response": FileResponse(
+                temp_filename, 
+                media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                filename="predictions.xlsx"
+            )
+        }
+    
+    except Exception as e:
+        return {"error": str(e)}
 
  
