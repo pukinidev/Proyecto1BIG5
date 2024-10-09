@@ -106,14 +106,20 @@ async def predict_from_excel(
             df = pd.read_csv(file.file)
         elif file.filename.endswith(".xlsx"):
             df = pd.read_excel(file.file, engine='openpyxl')
-
+        
+        texto = df["Textos_espanol"]
         labels = model.classes_
         probabilities = model.predict_proba(df)
 
         results = []
-        for probs in probabilities:
+        for i, probs in enumerate(probabilities):  
             result = {str(label): prob for label, prob in zip(labels, probs)}
+            text = texto[i] 
+            prediction = max(zip(labels, probs), key=lambda x: x[1])[0]
+            result["Texto"] = text
+            result["Prediccion"] = str(prediction)  
             results.append(result)
+            
 
         results_df = pd.DataFrame(results)
 
