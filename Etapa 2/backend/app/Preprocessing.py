@@ -62,10 +62,6 @@ class Preprocesamiento(BaseEstimator, TransformerMixin):
               if palabra != '':
                   new_words.append(palabra)
           return new_words
-#lenguaje de las palabras
-#encoding del archivo que suba la persona
-#preguntarle a don gepeto
-
 
       def preprocessing(self, words):
           words = self.to_lowercase(words)

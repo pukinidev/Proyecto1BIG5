@@ -3,12 +3,14 @@ import os
 from typing import List
 import tempfile
 from fastapi import FastAPI, File, UploadFile, HTTPException, Query
-from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from io import BytesIO
 import joblib
 from DataModel import Document
+from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score
+
 
 app = FastAPI()
 
@@ -43,6 +45,8 @@ async def create_upload_file(file: UploadFile = File(...)):
     return {"filename": file.filename}
 
 
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
 @app.post("/retrain")
 async def retrain_model(file: UploadFile = File(...)):
     if file.filename.split(".")[-1] not in ["csv", "xlsx"]:
@@ -57,14 +61,29 @@ async def retrain_model(file: UploadFile = File(...)):
     except KeyError:
         raise HTTPException(
             status_code=400, detail="La columna objetivo 'sdg' no se encontró en el archivo")
-
+    
     # Retrain the model with the new data
     model.fit(X, y)
+
+    # Make predictions on the same data (or split into training/testing for validation)
+    y_pred = model.predict(df)
+
+    # Calculate metrics
+    accuracy = accuracy_score(y, y_pred)
+    precision = precision_score(y, y_pred, average='weighted')
+    recall = recall_score(y, y_pred, average='weighted')
+    f1 = f1_score(y, y_pred, average='weighted')
 
     # Optionally, save the updated model back to disk
     joblib.dump(model, 'model.joblib')
 
-    return {"message": "El modelo fue reentrenado correctamente con nueva informacion!"}
+    # Return metrics in the response
+    return {
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "f1_score": f1
+    }
 
 """
 
