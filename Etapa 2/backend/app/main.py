@@ -16,8 +16,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000", "https://proyectobi.pukini.dev", "https://proyectobi.pukini.dev/retrainmodel", "https://proyectobi.pukini.dev/prediction" ],
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
