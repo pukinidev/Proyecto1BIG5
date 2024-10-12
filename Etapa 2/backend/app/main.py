@@ -44,7 +44,6 @@ async def create_upload_file(file: UploadFile = File(...)):
     return {"filename": file.filename}
 
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 @app.post("/retrain")
 async def retrain_model(file: UploadFile = File(...)):
