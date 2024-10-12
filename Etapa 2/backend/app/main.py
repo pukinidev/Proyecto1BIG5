@@ -79,17 +79,22 @@ async def predict(data: List[Document]):
     data_list = [item.model_dump() for item in data]
     df = pd.DataFrame(data_list)
     try:
+        texto = df["Textos_espanol"]
         labels = model.classes_
         probabilities = model.predict_proba(df)
-        result_list = [
-            [(str(label), float(prob)) for label, prob in zip(labels, probs)]
-            for probs in probabilities
-        ]
+        results = []
+        for i, probs in enumerate(probabilities):
+            result = {str(label): prob for label, prob in zip(labels, probs)}
+            text = texto[i]
+            prediction = max(zip(labels, probs), key=lambda x: x[1])[0]
+            result["Texto"] = text
+            result["Prediccion"] = str(prediction)
+            results.append(result)
+        results_df = pd.DataFrame(results)
 
-        return result_list
+        return results_df.to_dict(orient="records")
     except Exception as e:
         return {"error": str(e)}
-
 
 
 @app.post("/predict_from_excel")
@@ -106,20 +111,19 @@ async def predict_from_excel(
             df = pd.read_csv(file.file)
         elif file.filename.endswith(".xlsx"):
             df = pd.read_excel(file.file, engine='openpyxl')
-        
+
         texto = df["Textos_espanol"]
         labels = model.classes_
         probabilities = model.predict_proba(df)
 
         results = []
-        for i, probs in enumerate(probabilities):  
+        for i, probs in enumerate(probabilities):
             result = {str(label): prob for label, prob in zip(labels, probs)}
-            text = texto[i] 
+            text = texto[i]
             prediction = max(zip(labels, probs), key=lambda x: x[1])[0]
             result["Texto"] = text
-            result["Prediccion"] = str(prediction)  
+            result["Prediccion"] = str(prediction)
             results.append(result)
-            
 
         results_df = pd.DataFrame(results)
 
@@ -146,5 +150,3 @@ async def download_file(data: List[dict], format: str = Query(..., enum=["xlsx",
         with pd.ExcelWriter(temp_filename, engine='xlsxwriter') as writer:
             results_df.to_excel(writer, index=False)
         return FileResponse(temp_filename, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', filename="predictions.xlsx")
-        
-   
